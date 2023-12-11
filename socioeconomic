@@ -1,0 +1,51 @@
+Page: Socioeconomic Factors Influencing Depression
+Objective:
+To analyze and visualize the correlation between depression and various socioeconomic factors, providing insights into how these elements interact and influence mental health on a global scale.
+
+UI Code:
+R
+Copy code
+library(shiny)
+library(ggplot2)
+library(plotly)
+
+ui <- fluidPage(
+    titlePanel("Socioeconomic Factors Influencing Depression"),
+    sidebarLayout(
+        sidebarPanel(
+            selectInput("factorSelect", "Select Socioeconomic Factor:", 
+                        choices = c("Income", "Education", "Employment", "Urbanization")),
+            sliderInput("yearRange", "Select Year Range:",
+                        min = 2000, max = 2020, value = c(2010, 2020))
+        ),
+        mainPanel(
+            plotlyOutput("socioeconomicPlot")
+        )
+    )
+)
+Server Code:
+R
+Copy code
+server <- function(input, output) {
+    output$socioeconomicPlot <- renderPlotly({
+        # Assuming 'socio_df' is your dataset with socioeconomic factors and depression rates
+        filteredData <- socio_df %>%
+                        filter(Year >= input$yearRange[1], Year <= input$yearRange[2],
+                               Factor == input$factorSelect)
+        p <- ggplot(filteredData, aes_string(x = "Year", y = "Depression_Rate", color = "Region")) +
+            geom_line() +
+            labs(title = paste("Depression Rates vs", input$factorSelect),
+                 x = "Year", y = "Depression Rate (%)") +
+            theme_minimal()
+        ggplotly(p)
+    })
+}
+
+shinyApp(ui = ui, server = server)
+Description:
+This page allows users to explore how different socioeconomic factors correlate with depression rates. Users can select a factor (like income or education) and a year range to see trends over time. The data is visualized using interactive line graphs, where users can hover over points for detailed information. This interactive visualization helps in understanding the complex relationship between socioeconomic conditions and mental health.
+
+Data Requirements:
+Ensure your dataset (socio_df) includes columns for the year, region, depression rate, and the selected socioeconomic factors. You might need to preprocess your data to include these factors and ensure they are correctly categorized for effective visualization.
+
+This page will provide a unique perspective on the socioeconomic dimensions of depression, adding depth and breadth to your data story.
