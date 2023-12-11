@@ -97,14 +97,14 @@ server <- function(input, output) {
   }
   
   output$total <- renderUI({
-    get_average_severity <- function(df, country) {
+    get_average <- function(df, country) {
       country_average <- mean(df$depression.population[df$Entity == country], na.rm = TRUE)
       total_text <- paste("Average Depression population", country, ":", round(country_average))
       return(total_text)
     }
     
     country <- input$Entity
-    total_text <- get_average_severity(proj_df, country)
+    total_text <- get_average(proj_df, country)
     total_html <- HTML(total_text)
     
     return(total_html)
