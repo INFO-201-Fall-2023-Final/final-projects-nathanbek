@@ -43,6 +43,7 @@ analysis_view <- fluidPage(
       tabsetPanel(
         tabPanel("Table", tableOutput(outputId = "table")),
         tabPanel("Plot", plotOutput(outputId = "radar"))
+
       )
     )
   )
@@ -53,6 +54,8 @@ ui <- navbarPage(
   "Mental Health Data Exploration",
   tabPanel("Introduction", about_view),
   tabPanel("Disorders by Country", analysis_view)
+  tabPanel("Disorders by Gender", analysis_view)
+  tabPanel("Disorders by Severity", analysis_view)
 )
 
 # Server function
