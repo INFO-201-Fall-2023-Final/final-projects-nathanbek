@@ -6,6 +6,12 @@ source("CLEANPROJECTDATASET.R")
 
 proj_df <- read.csv("projectdataframe.csv")
 
+about_view <- fluidPage(
+  h1("Intro Page"),
+  p("Stuff goes here"),
+  p("yayaya")
+)
+
 analysis_view <- fluidPage(
   titlePanel("Disorder analysis"),
   sidebarLayout(
@@ -29,16 +35,32 @@ analysis_view <- fluidPage(
   
 )
 
-about_view <- fluidPage(
-  h1("Intro Page"),
-  p("Stuff goes here"),
-  p("yayaya")
+depression_view <- fluidPage(
+  titlePanel("Depression analysis"),
+  sidebarLayout(
+    sidebarPanel(
+      
+      selectInput(
+        inputId = "Entity",
+        label = "Select a country",
+        choices = proj_df$Entity
+      )
+      
+    ),
+    mainPanel(
+      tabsetPanel(
+        tabPanel("Plot", plotOutput(outputId = "graph"))
+      )
+    )
+  )
+  
 )
 
 ui <- navbarPage(
   "Final Project",
   tabPanel("Introduction", about_view),
-  tabPanel("Disorders", analysis_view)
+  tabPanel("Disorders", analysis_view),
+  tabPanel("Depression", depression_view)
 )
 
 server <- function(input, output) {
@@ -54,6 +76,24 @@ server <- function(input, output) {
     do.call("rbind", list(max_pt, min_pt, data_pt))
   }
   
+  plot_depression_gender <- function(name) {
+    data_pt <- subset(proj_df, Entity == name)
+    filtered_data <- select(data_pt, Year, 
+                            "Prevalence...Depressive.disorders...Sex..Male...Age..Age.standardized..Percent.",
+                            "Prevalence...Depressive.disorders...Sex..Female...Age..Age.standardized..Percent.")
+    
+    plot <- ggplot(filtered_data, aes(x = Year)) +
+      geom_line(aes(y = `Prevalence...Depressive.disorders...Sex..Male...Age..Age.standardized..Percent.`, color = "Male")) +
+      geom_line(aes(y = `Prevalence...Depressive.disorders...Sex..Female...Age..Age.standardized..Percent.`, color = "Female")) +
+      labs(title = paste("Depression Prevalence in", name, ": Male vs Female"),
+           x = "Year",
+           y = "Prevalence (%)",
+           color = "Gender") +
+      theme_minimal()
+    
+    return(plot)
+  }
+  
   output$table <- renderTable({
     return(make_radar_tb(input$country))
   })
@@ -62,6 +102,14 @@ server <- function(input, output) {
     tb <- make_radar_tb(input$country)
     radarchart(tb)
   })
+  
+  output$graph <- renderPlot({
+    plot_depression_gender(input$Entity)
+  })
+}
+
+#what actually makes the shiny app
+shinyApp(ui = ui, server = server)
 }
 
 
