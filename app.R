@@ -1,4 +1,5 @@
 library(shiny)
+library(shiny)
 library(dplyr)
 library(ggplot2)
 library(fmsb)
@@ -6,29 +7,29 @@ source("CLEANPROJECTDATASET.R")
 
 proj_df <- read.csv("projectdataframe.csv")
 
+# Introduction Page
 about_view <- fluidPage(
-  about_view <- fluidPage(
-    titlePanel("Understanding Global Mental Health Trends"),
-    sidebarLayout(
-      sidebarPanel(
-        h3("About the Project"),
-        p("In this project, we delve into the complex world of mental health, focusing on the prevalence and severity of depression disorders across the globe. Our analysis aims to shed light on patterns and disparities in mental health, emphasizing the importance of informed and empathetic understanding of these issues."),
-        p("Why is this important? Mental health is a crucial aspect of overall well-being, yet it often remains overlooked or misunderstood. By analyzing comprehensive datasets, we hope to contribute to a more nuanced conversation about mental health and its impact on individuals and societies.")
-      ),
-      mainPanel(
-        h4("Dataset Overview"),
-        p("This analysis utilizes several datasets, including the Mental Health Depression Disorder Dataset, along with data on the prevalence of depression in various demographics."),
-        p("Key aspects of our analysis include examining global trends in mental health disorders, gender-specific prevalence rates, and exploring the socioeconomic factors that influence mental health outcomes."),
-        h4("Why Should You Care?"),
-        p("The insights gained from this analysis are not just numbers and graphs; they represent real people and real challenges. Understanding these trends is vital for policymakers, healthcare providers, and communities to develop effective strategies for mental health care and support."),
-        h4("Additional Resources"),
-        p(a("Learn more about mental health", href = "https://www.who.int/health-topics/mental-health#tab=tab_1", target = "_blank")),
-        p(a("World Health Organization: Mental Health", href = "https://www.who.int/news-room/fact-sheets/detail/mental-health-strengthening-our-response", target = "_blank"))
-      )
+  titlePanel("Understanding Global Mental Health Trends"),
+  sidebarLayout(
+    sidebarPanel(
+      h3("About the Project"),
+      p("In this project, we delve into the complex world of mental health, focusing on the prevalence and severity of depression disorders across the globe. Our analysis aims to shed light on patterns and disparities in mental health, emphasizing the importance of informed and empathetic understanding of these issues."),
+      p("Why is this important? Mental health is a crucial aspect of overall well-being, yet it often remains overlooked or misunderstood. By analyzing comprehensive datasets, we hope to contribute to a more nuanced conversation about mental health and its impact on individuals and societies.")
+    ),
+    mainPanel(
+      h4("Dataset Overview"),
+      p("This analysis utilizes several datasets, including the Mental Health Depression Disorder Dataset, along with data on the prevalence of depression in various demographics."),
+      p("Key aspects of our analysis include examining global trends in mental health disorders, gender-specific prevalence rates, and exploring the socioeconomic factors that influence mental health outcomes."),
+      h4("Why Should You Care?"),
+      p("The insights gained from this analysis are not just numbers and graphs; they represent real people and real challenges. Understanding these trends is vital for policymakers, healthcare providers, and communities to develop effective strategies for mental health care and support."),
+      h4("Additional Resources"),
+      p(a("Learn more about mental health", href = "https://www.who.int/health-topics/mental-health#tab=tab_1", target = "_blank")),
+      p(a("World Health Organization: Mental Health", href = "https://www.who.int/news-room/fact-sheets/detail/mental-health-strengthening-our-response", target = "_blank"))
     )
   )
 )
 
+# Disorders by Country Page
 total_view <- fluidPage(
   titlePanel("Disorder Analysis"),
   sidebarLayout(
@@ -40,20 +41,21 @@ total_view <- fluidPage(
       )
     ),
     mainPanel(
+      h4("Instructions"),
+      p("Choose a country from the dropdown menu to see the disorder analysis. The results will include both a table and graphical representation."),
       tabsetPanel(
         tabPanel("Table", tableOutput(outputId = "table")),
         tabPanel("Plot", plotOutput(outputId = "radar"))
-        
       )
     )
   )
 )
 
+# Depression Analysis Page
 depression_view <- fluidPage(
   titlePanel("Depression analysis"),
   sidebarLayout(
     sidebarPanel(
-      
       selectInput(
         inputId = "Entity",
         label = "Select a country",
@@ -61,9 +63,11 @@ depression_view <- fluidPage(
       ),
       htmlOutput(outputId = "total"),
       br()
-      
     ),
     mainPanel(
+      h4("Depression analyzing male vs female"),
+      p("Select a country from the dropdown menu to see the depression analysis of male versus females. 
+        The analysis includes a plot showing depression prevalence over the years for both groups."),
       tabsetPanel(
         tabPanel("Plot", plotOutput(outputId = "graph"))
       )
@@ -71,6 +75,7 @@ depression_view <- fluidPage(
   )
 )
 
+# Mental Health Trends Page
 analysis_view <- fluidPage(
   titlePanel("Mental Health Trends"),
   sidebarLayout(
@@ -81,6 +86,8 @@ analysis_view <- fluidPage(
                                                                "Alcohol.use.disorders...."))
     ),
     mainPanel(
+      h4("Mental Health Trends"),
+      p("Explore mental health trends by selecting a country and a specific disorder from the dropdown menus. The plot will display trends in the prevalence of the chosen disorder over the years."),
       tabsetPanel(
         tabPanel("Plot", plotOutput(outputId = "trends_plot"))
       )
@@ -88,7 +95,7 @@ analysis_view <- fluidPage(
   )
 )
 
-
+# Shiny App UI
 ui <- navbarPage(
   "Mental Health Data Exploration",
   tabPanel("Introduction", about_view),
