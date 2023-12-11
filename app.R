@@ -76,7 +76,9 @@ analysis_view <- fluidPage(
   sidebarLayout(
     sidebarPanel(
       selectInput("country", "Select a country", choices = unique(proj_df$Entity)),
-      selectInput("disorder", "Select a disorder", choices = c("Depression", "Anxiety"))
+      selectInput("disorder", "Select a disorder", choices = c("Bipolar.disorder...." , "Anxiety.disorders....", "Eating.disorders....",
+                                                               "Schizophrenia....", "Drug.use.disorders....", "Depression....", 
+                                                               "Alcohol.use.disorders...."))
     ),
     mainPanel(
       tabsetPanel(
@@ -109,12 +111,11 @@ server <- function(input, output) {
   }
   
   create_trends_plot <- function(df, country, disorder) {
-    plot_data <- df %>%
-      filter(Entity == country) %>%
-      select(Year, !!as.name(disorder))
+    data_pt <- subset(df, Entity == country)
+    plot_data <- select(data_pt, Year, !!as.name(disorder))
     
-    plot <- ggplot(plot_data, aes(x = Year, y = !!sym(disorder))) +
-      geom_line() +
+    plot <- ggplot(plot_data, aes(x = Year)) +
+      geom_line(aes(y = !!sym(disorder))) +
       labs(title = paste("Trends in", disorder, "Prevalence for", country),
            x = "Year",
            y = "Prevalence (%)") +
@@ -123,19 +124,9 @@ server <- function(input, output) {
     return(plot)
   }
   
+  
   output$trends_plot <- renderPlot({
-    country <- input$country
-    disorder <- switch(
-      input$disorder,
-      "Depression" = "Depression_Prevalence",
-      "Anxiety" = "Anxiety_Prevalence",
-      "Depression_Prevalence" = "Depression_Prevalence"  # Default to Depression if not selected
-    )
-    
-    plot <- create_trends_plot(proj_df, country, disorder)
-    
-    # Alternatively, you can use 'return' (though 'print' is not always necessary)
-    return(plot)
+    create_trends_plot(proj_df, input$country, input$disorder)
   })
   
   
@@ -188,3 +179,4 @@ server <- function(input, output) {
 
 #what actually makes the shiny app
 shinyApp(ui = ui, server = server)
+
