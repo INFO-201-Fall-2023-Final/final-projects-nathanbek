@@ -12,7 +12,7 @@ about_view <- fluidPage(
   p("yayaya")
 )
 
-analysis_view <- fluidPage(
+total_view <- fluidPage(
   titlePanel("Disorder analysis"),
   sidebarLayout(
     sidebarPanel(
@@ -44,7 +44,9 @@ depression_view <- fluidPage(
         inputId = "Entity",
         label = "Select a country",
         choices = proj_df$Entity
-      )
+      ),
+      htmlOutput(outputId = "total"),
+      br()
       
     ),
     mainPanel(
@@ -53,13 +55,13 @@ depression_view <- fluidPage(
       )
     )
   )
-  
 )
+analysis_view <- fluidPage()
 
 ui <- navbarPage(
   "Final Project",
   tabPanel("Introduction", about_view),
-  tabPanel("Disorders", analysis_view),
+  tabPanel("Disorders", total_view),
   tabPanel("Depression", depression_view)
 )
 
@@ -94,6 +96,20 @@ server <- function(input, output) {
     return(plot)
   }
   
+  output$total <- renderUI({
+    get_average_severity <- function(df, country) {
+      country_average <- mean(df$depression.population[df$Entity == country], na.rm = TRUE)
+      total_text <- paste("Average Depression population", country, ":", round(country_average))
+      return(total_text)
+    }
+    
+    country <- input$Entity
+    total_text <- get_average_severity(proj_df, country)
+    total_html <- HTML(total_text)
+    
+    return(total_html)
+  })
+  
   output$table <- renderTable({
     return(make_radar_tb(input$country))
   })
@@ -107,11 +123,6 @@ server <- function(input, output) {
     plot_depression_gender(input$Entity)
   })
 }
-
-#what actually makes the shiny app
-shinyApp(ui = ui, server = server)
-}
-
 
 #what actually makes the shiny app
 shinyApp(ui = ui, server = server)
