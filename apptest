@@ -53,8 +53,8 @@ analysis_view <- fluidPage(
 ui <- navbarPage(
   "Mental Health Data Exploration",
   tabPanel("Introduction", about_view),
-  tabPanel("Disorders by Country", analysis_view)
-  tabPanel("Disorders by Gender", analysis_view)
+  tabPanel("Disorders by Country", analysis_view),
+  tabPanel("Disorders by Gender", analysis_view),
   tabPanel("Disorders by Severity", analysis_view)
 )
 
